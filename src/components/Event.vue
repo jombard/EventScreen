@@ -5,7 +5,7 @@
       label-for="summary-input">
       <b-form-input
         id="summary-input"
-        v-model="eventInfo.Summary">
+        v-model="eventInfo.summary">
       </b-form-input>
     </b-form-group> 
     <b-form-group
@@ -13,97 +13,87 @@
       label-for="description-input">
       <b-form-textarea
         id="description-input"
-        v-model="eventInfo.Description">
+        v-model="eventInfo.description">
       </b-form-textarea>
     </b-form-group>
     <b-form-group
-      label="FromDate">
+      label="Start Date">
       <b-row>
         <b-col>
-          <b-form-input type="date" v-model="eventInfo.FromDate"></b-form-input>
+          <b-form-input type="date" v-model="eventInfo.startDate"></b-form-input>
         </b-col>
         <b-col>
-          <b-form-input type="time" v-model="eventInfo.FromTime"></b-form-input>
+          <b-form-input type="time" v-model="eventInfo.startTime"></b-form-input>
         </b-col>
       </b-row>
     </b-form-group>
     <b-form-group
-      label="ToDate">
+      label="End Date">
       <b-row>
         <b-col>
-          <b-form-input type="date" v-model="eventInfo.ToDate"></b-form-input>
+          <b-form-input type="date" v-model="eventInfo.endDate"></b-form-input>
         </b-col>
         <b-col>
-          <b-form-input type="time" v-model="eventInfo.ToTime"></b-form-input>
+          <b-form-input type="time" v-model="eventInfo.endTime"></b-form-input>
         </b-col>
       </b-row>
     </b-form-group>
     <b-form-group
-      label="Country & Venue">
-      <b-row>
-        <b-col>
-          <multi-select
-            v-model="eventInfo.Country"
-            :options="countryList"
-            :searchable="true"
-            :allow-empty="true"
-            :show-labels="false"
-            track-by="name"
-            label="name"
-            placeholder="Select Country"
-            @input="changeVenueList()"
-          ></multi-select>
-        </b-col>
-        <b-col>
-          <multi-select
-            v-model="eventInfo.Venue"
-            :options="venueList"
-            :searchable="true"
-            :allow-empty="true"
-            :show-labels="false"
-            placeholder="Select Venue"
-          ></multi-select>
-        </b-col>
-      </b-row>
-    </b-form-group>
-    <b-form-group>
+      label="Country">
       <multi-select
-        v-model="eventInfo.Categories"
+        v-model="eventInfo.countryName"
+        :options="countryList"
+        :searchable="true"
+        :allow-empty="true"
+        :show-labels="false"
+        placeholder="Select Country"
+      ></multi-select>
+    </b-form-group>
+    <b-form-group
+      label="Venue">
+      <b-form-input
+        v-model="eventInfo.venue">
+      </b-form-input>
+    </b-form-group>
+    <b-form-group
+      label="Category">
+      <multi-select
+        v-model="eventInfo.categories"
         :options="categoryList"
         :searchable="true"
         :allow-empty="true"
         :show-labels="false"
         :multiple="true"
         placeholder="Select Category"
-        track-by="id"
-        label="name"
+        track-by="categoryId"
+        label="categoryName"
       ></multi-select>
     </b-form-group>
     <b-form-group>
       <b-form-checkbox
-        v-model="eventInfo.IsHeadline"
+        v-model="eventInfo.isHeadline"
         inline>
         HeadLine
       </b-form-checkbox>
       <b-form-checkbox
-        v-model="eventInfo.IsTopStory"
+        v-model="eventInfo.isTopStory"
         inline>
         TopStory
       </b-form-checkbox>
       <b-form-checkbox
-        v-model="eventInfo.IsProvisionalDate"
+        v-model="eventInfo.isProvisional"
         inline>
         Provisional
       </b-form-checkbox>
     </b-form-group>
     <b-form-group>
       <b-form-checkbox
-        v-model="eventInfo.PrivateEvent"
+        v-model="eventInfo.privateEvent"
         inline>
         Private
       </b-form-checkbox>
       <b-form-checkbox
-        v-model="eventInfo.StarredEvent"
+        v-model="eventInfo.starredEvent"
         inline>
         Starred
       </b-form-checkbox>
@@ -127,48 +117,22 @@ export default {
       countryList: state => state.country.data
     })
   },
-  data() {
-    return {
-      venueList: []
-    }
-  },
   created() {
     this.initEvent()
   },
   methods: {
-    changeVenueList() {
-      if( this.eventInfo.Country){
-        this.venueList = this.eventInfo.Country.venues
-      }else{
-        this.venueList = []
-      }
-      this.eventInfo.Venue = ''
-    },
     initEvent() {
       let vm= this
-      if (vm.eventInfo.FromDate) {
-        let fromDate = vm.eventInfo.FromDate
-        vm.eventInfo.FromDate = moment(Number(fromDate)).format("YYYY-MM-DD")
-        vm.eventInfo.FromTime = moment(Number(fromDate)).format("HH:mm:ss")
+      if (vm.eventInfo.startDate) {
+        let startDate = vm.eventInfo.startDate
+        vm.eventInfo.startDate = moment(startDate).format("YYYY-MM-DD")
+        vm.eventInfo.startTime = moment(startDate).format("HH:mm:ss")
       }
 
-      if (vm.eventInfo.ToDate) {
-        let toDate = vm.eventInfo.ToDate
-        vm.eventInfo.ToDate = moment(Number(toDate)).format("YYYY-MM-DD")
-        vm.eventInfo.ToTime = moment(Number(toDate)).format("HH:mm:ss")
-      }
-
-      if (vm.eventInfo.Country) {
-        vm.eventInfo.Country = vm.countryList.find( item => item.name == vm.eventInfo.Country )
-        vm.venueList = vm.eventInfo.Country.venues
-      }
-
-      if (this.eventInfo.Categories) {
-        let cat_list = []
-        vm.eventInfo.Categories.forEach((cat) => {
-          cat_list.push( vm.categoryList.find( item => item.name == cat ))
-        })
-        vm.eventInfo.Categories = cat_list
+      if (vm.eventInfo.endDate) {
+        let endDate = vm.eventInfo.endDate
+        vm.eventInfo.endDate = moment(endDate).format("YYYY-MM-DD")
+        vm.eventInfo.endTime = moment(endDate).format("HH:mm:ss")
       }
     }
   }

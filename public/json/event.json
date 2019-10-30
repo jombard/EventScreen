@@ -1,66 +1,6 @@
 {
   "data": [
     {
-      "userItemId": 229721,
-      "organisation": "Organisation for Economic Co-operation & Development",
-      "countryId": 114,
-      "timeZoneId": 18,
-      "contactName": "",
-      "contactPhone": "",
-      "contactEmail": "",
-      "contactLink": "",
-      "isDeleted": false,
-      "privateEvent": true,
-      "starredEvent": false,
-      "dateModified": "1508236247240",
-      "dateCreated": "1508234209187",
-      "comments": [],
-      "categories": ["Category 1", "Category 2"],
-      "itemId": 3365209,
-      "startDate": "1572028601143",
-      "endDate": "1572228675927",
-      "time": null,
-      "isProvisionalDate": true,
-      "venue": "London",
-      "description": "40th anniversary of internationally respected Roman Catholic nun Mother Teresa awarded the Nobel Prize for Peace for her work with the destitute of India",
-      "summary": "40th anniversary of Mother Teresa awarded Nobel Peace Prize",
-      "isHeadline": false,
-      "isTopStory": false,
-      "isNew": false,
-      "isUpdated": false,
-      "country": "United Kingdom"
-    },
-    {
-      "userItemId": 229722,
-      "organisation": "Organisation for Economic Co-operation & Development",
-      "countryId": 114,
-      "timeZoneId": 18,
-      "contactName": "",
-      "contactPhone": "",
-      "contactEmail": "",
-      "contactLink": "",
-      "isDeleted": false,
-      "privateEvent": false,
-      "starredEvent": false,
-      "dateModified": "1518236247240",
-      "dateCreated": "1518234209187",
-      "comments": [],
-      "categories": ["Category 2", "Category 3"],
-      "itemId": 3365210,
-      "startDate": "1570577600000",
-      "endDate": "1570578600000",
-      "time": null,
-      "isProvisionalDate": true,
-      "venue": "London",
-      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Amet nulla facilisi morbi tempus iaculis urna. Pellentesque adipiscing commodo elit at imperdiet dui. Consequat nisl vel pretium lectus. Quis blandit turpis cursus in hac habitasse platea. Aliquam ultrices sagittis orci a scelerisque purus semper. Eu augue ut lectus arcu. Aenean sed adipiscing diam donec adipiscing tristique risus nec.",
-      "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-      "isHeadline": true,
-      "isTopStory": false,
-      "isNew": true,
-      "isUpdated": false,
-      "country": "United Kingdom"
-    },
-    {
       "itemId": 3594826,
       "ukItemId": 0,
       "usItemId": 0,
@@ -153,7 +93,14 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false,
+      "location": {
+        "lat": 51.9042876,
+        "lng": -0.2038983
+      }
     },
     {
       "itemId": 3782173,
@@ -258,7 +205,14 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false,
+      "location": {
+        "lat": 53.3961414,
+        "lng": -2.9929148
+      }
     },
     {
       "itemId": 3595645,
@@ -363,7 +317,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3791660,
@@ -473,7 +430,14 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false,
+      "location": {
+        "lat": 41.9792588,
+        "lng": -87.8626865
+      }
     },
     {
       "itemId": 3598195,
@@ -603,7 +567,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3598255,
@@ -718,7 +685,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3598251,
@@ -823,7 +793,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3598326,
@@ -961,7 +934,10 @@
       "itemContacts": [],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3599883,
@@ -1066,7 +1042,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3798008,
@@ -1181,7 +1160,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3799549,
@@ -1254,7 +1236,10 @@
       "itemContacts": [],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3599900,
@@ -1364,7 +1349,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3602188,
@@ -1499,7 +1487,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3602192,
@@ -1604,7 +1595,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3602184,
@@ -1677,7 +1671,10 @@
       "itemContacts": [],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3602298,
@@ -1782,7 +1779,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3602303,
@@ -1855,7 +1855,10 @@
       "itemContacts": [],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3613274,
@@ -1933,7 +1936,10 @@
       "itemContacts": [],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3606741,
@@ -2043,7 +2049,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3614563,
@@ -2111,7 +2120,10 @@
       "itemContacts": [],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3782190,
@@ -2311,7 +2323,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3602324,
@@ -2411,7 +2426,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3609689,
@@ -2511,7 +2529,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3609688,
@@ -2629,7 +2650,10 @@
       "itemContacts": [],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3610809,
@@ -2744,7 +2768,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3606736,
@@ -2849,7 +2876,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3613508,
@@ -2969,7 +2999,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3613518,
@@ -3074,7 +3107,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3789815,
@@ -3229,7 +3265,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3609583,
@@ -3354,7 +3393,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3789814,
@@ -3499,7 +3541,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3615181,
@@ -3629,7 +3674,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3799542,
@@ -3729,7 +3777,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3611966,
@@ -3844,7 +3895,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3615778,
@@ -3969,7 +4023,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3613394,
@@ -4094,7 +4151,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3613395,
@@ -4209,7 +4269,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3616451,
@@ -4309,7 +4372,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3617695,
@@ -4424,7 +4490,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     },
     {
       "itemId": 3617743,
@@ -4539,7 +4608,10 @@
       ],
       "amount": null,
       "currency": null,
-      "order": null
+      "order": null,
+      "isSelected": false,
+      "starredEvent": false,
+      "privateEvent": false
     }
   ]
 }

@@ -2,6 +2,7 @@
   width: 260px;
   height: 100vh;
 }
+
 .event-content {
   width: calc( 100% - 260px );
   margin-left: 260px;
@@ -15,16 +16,11 @@
     &.active {
       border: 5px solid #37a000;
     }
-    .edit-link {
-      float: right;
-      margin-top: -2.5rem;
-      display: none;
-    }
-    &:hover {
-      .edit-link {
-        display: block;
-      }
-    }
+    // &:hover {
+      // .edit-link {
+        // display: block;
+      // }
+    // }
     .fix-desc{
       max-height: 50px;
       overflow: hidden;
@@ -57,4 +53,17 @@
       }  
     }
   }  
+  .edit-link {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    // margin-top: -2.5rem;
+    // display: none;
+  }
+  .view-link {
+    font-size: 1.5em;
+    color: gray;
+    &.active {
+      color: #007bff;
+    }
+  }
 }

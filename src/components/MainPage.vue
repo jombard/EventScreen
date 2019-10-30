@@ -9,11 +9,15 @@
 					<b-form-input type="search" placeholder="Search" v-model="searchText"></b-form-input>
 				</b-form-group>
 				<b-form-group>
-					<b-form-select
+					<multi-select
 						v-model="selPeriod"
 						:options="periodList"
-					></b-form-select>
-					<div v-if="selPeriod == 'custom'" class="ml-2 mt-1">
+						:show-labels="false"
+						placeholder="Select Period"
+						track-by="value"
+						label="text">
+					</multi-select>
+					<div v-if="selPeriod.value == 'custom'" class="ml-2 mt-1">
 						<b-form-group
 							label="From">
 							<b-form-input type="date" v-model="startDate"></b-form-input>
@@ -33,8 +37,8 @@
 						:show-labels="false"
 						:multiple="true"
 						placeholder="Select Category"
-						track-by="id"
-						label="name"
+						track-by="categoryId"
+						label="categoryName"
 					></multi-select>
 				</b-form-group>
         <b-button variant="outline-primary" @click="searchEvent()">Search Events</b-button>
@@ -43,9 +47,20 @@
 				<b-card>
 					<span class="d-block font-weight-bold mt-2 float-left">{{ searchEventList.length }} Results</span>	
 					<b-button class="float-right" variant="primary" @click="showCreateEvent()">Add Event</b-button>
-					<b-button class="float-right mr-2" variant="outline-primary" @click="setPrivate()">Set Private</b-button>
-					<b-button class="float-right mr-2" variant="outline-primary" @click="setStarred()">Set Starred</b-button>
-					<!-- <b-button class="float-right mr-2" variant="outline-info" @click="selectAll()">Select All</b-button> -->
+					<b-button class="float-right mr-2" variant="outline-primary" @click="setSelPrivate()">Set Private</b-button>
+					<b-button class="float-right mr-2" variant="outline-primary" @click="setSelStarred()">Set Starred</b-button>
+					<b-link class="edit-link float-right mr-2" @click="selectAll">
+						<font-awesome-icon :icon=" isAllSelected ?  ['far','check-square'] : ['far','square']" />
+					</b-link>
+
+					<b-link class="view-link float-right mr-5" :class="statusView == 2 ? 'active' : ''" @click="statusView=2">
+						<font-awesome-icon icon="align-justify" />
+					</b-link>
+					<b-link class="view-link float-right mr-3" :class="statusView == 1 ? 'active' : ''" @click="statusView=1">
+						<font-awesome-icon icon="equals" />
+					</b-link>
+					
+
 					<b-modal 
 						v-model="modalShow"
 						title="Event"
@@ -55,19 +70,51 @@
 						<event :eventInfo="eventInfo"></event>
 					</b-modal>
 				</b-card>
-        <a v-for="(event, index) in displayEventList" :key="index" @click="event.isSelected = !event.isSelected">
-					<event-item :eventData="event" @showEditEvent="showEditEvent(event)" ></event-item>
-        </a>
-        <b-card v-if="displayEventList.length == 0">
-          <b-card-text>
-            Sorry, we have not any events.
-          </b-card-text>
-        </b-card>
-				<div v-if="cntEvent< searchEventList.length" class="text-center my-1">
-					<b-button @click="showMore()" variant="info">Load More</b-button>
+				<div v-if="isLoading" class="text-center mt-5">
+					<div class="spinner-grow text-primary" role="status">
+						<span class="sr-only">Loading...</span>
+					</div>
+					<div class="spinner-grow text-secondary" role="status">
+						<span class="sr-only">Loading...</span>
+					</div>
+					<div class="spinner-grow text-success" role="status">
+						<span class="sr-only">Loading...</span>
+					</div>
+				</div>
+				<div v-else>
+					<a v-for="(event, index) in displayEventList" :key="index">
+						<event-item 
+							:eventData="event" 
+							@showEditEvent="showEditEvent(event)" 
+							@showGoogleMap="showGoogleMap(event)"
+							:viewMode="statusView">
+						</event-item>
+					</a>
+					<b-card v-if="displayEventList.length == 0">
+						<b-card-text>
+							Sorry, we have not any events.
+						</b-card-text>
+					</b-card>
+					<div v-if="cntEvent< searchEventList.length" class="text-center my-1">
+						<b-button @click="showMore()" variant="info">Load More</b-button>
+					</div>
 				</div>
       </div>
 		</b-container>
+		<b-modal ref="map-modal" hide-footer title="Google Map" size="xl">
+      <div class="d-block text-center">
+        <GmapMap
+					:center="location"
+					:zoom="7"
+					map-type-id="terrain"
+					style="width: 100%; height:700px;"
+				>
+					<GmapMarker
+						:position="location"
+					/>
+				</GmapMap>
+      </div>
+    </b-modal>
 	</div>
 </template>
 <script>
@@ -76,6 +123,7 @@ import { mapState } from 'vuex'
 import EventItem from './EventItem'
 import Event from './Event'
 import MultiSelect from 'vue-multiselect'
+
 export default {
 	name: 'MainPage',
 	components: {
@@ -87,7 +135,8 @@ export default {
 		...mapState({
 			categoryList: state => state.category.data,
 			eventList: state => state.event.data,
-			countryList: state => state.country.data
+			countryList: state => state.country.data,
+			isLoading: state => state.event.isLoading
 		}),
 		// displayEventList() {
 		// 	return this.searchEventList.slice(0, this.cntEvent)
@@ -143,21 +192,35 @@ export default {
 			eventInfo: {},
 			flagInsert: 'new',
 			cntEvent: 10,
+			stepCnt: 10,
 			displayEventList: [],
-			isSelected: false
+			isAllSelected: false,
+			statusStarred: false,
+			statusPrivate: false,
+			statusView: 1,
+			location: {}
 		}
 	},
 	created() {
 		this.$store.dispatch('getCategoryData')
 		this.$store.dispatch('getEventData')
 		this.$store.dispatch('getCountryData')
+		
+	},
+	watch: {
+		isLoading: function() {
+			if( !this.isLoading ){
+				this.searchEvent()
+				console.log("Search")
+			}
+		}
 	},
 	methods: {
 		searchEvent() {
 			let vm = this
 			let sDate = moment().startOf('day')
 			let eDate = moment().endOf('day')
-			switch (this.selPeriod) {
+			switch (this.selPeriod.value) {
 				case 'today':
 					break
 				case 'tomorrow':
@@ -183,55 +246,59 @@ export default {
 					eDate = moment(this.endDate).endOf('day')
 					break
 			}
-			sDate = sDate.valueOf()
-			eDate = eDate.valueOf()
+			sDate = sDate.format('YYYY-MM-DDT00:00:00')
+			eDate = eDate.format('YYYY-MM-DDT23:59:59')
+
 			vm.searchEventList = []
 			vm.eventList.forEach((item) => {
 				
 				if (vm.searchText){
-					if (item.Summary.search(vm.searchText) ===-1 && item.Description.search(vm.searchText) === -1) return
+					if (item.summary.search(vm.searchText) ===-1 && item.description.search(vm.searchText) === -1) return
 				}
-				if (vm.selPeriod) {
-					if (item.FromDate > eDate || item.ToDate < sDate) return
+				if (vm.selPeriod.value) {
+					if (item.startDate > eDate || item.endDate < sDate) return
 				}
 				if(vm.selCategory.length > 0){
 					let flagFind = false
 					vm.selCategory.every( (cat) => {
-						if (item.Categories.includes(cat.name)) {
-							flagFind = true
+						item.categories.every( (real_cat) => {
+
+							if( cat.categoryId == real_cat.categoryId) {
+								flagFind = true
+								return false
+							}
+						})
+						if (flagFind) {
 							return false
 						}
 						return true
 					})
 					if (!flagFind) return
 				}
-				item['isSelected'] = false
+				// item['isSelected'] = false
+				if (!item.starredEvent) item.starredEvent = false
+				if (!item.privateEvent) item.privateEvent = false
 				vm.searchEventList.push(item)
 			})
+			console.log(vm.eventList)
 			vm.displayEventList = vm.searchEventList.slice(0, vm.cntEvent)
 		},
 		saveEvent() {
 			let vm = this
-			vm.eventInfo.Country = vm.eventInfo.Country.name
-			let new_cat = []
-			vm.eventInfo.Categories.forEach( (item) => {
-				new_cat.push(item.name)
-			})
-			vm.eventInfo.Categories = new_cat
-
-			vm.eventInfo.FromDate = moment(vm.eventInfo.FromDate + " " + vm.eventInfo.FromTime).valueOf()
-			vm.eventInfo.ToDate = moment(vm.eventInfo.ToDate + " " + vm.eventInfo.ToTime).valueOf()
+			vm.eventInfo.startDate = moment(vm.eventInfo.startDate + " " + vm.eventInfo.startTime).format("YYYY-MM-DDTHH:mm:ss")
+			vm.eventInfo.endDate = moment(vm.eventInfo.endDate + " " + vm.eventInfo.endTime).format("YYYY-MM-DDTHH:mm:ss")
 
 			if (vm.flagInsert == 'new'){
-				vm.eventInfoIsNew = true
-				vm.eventInfo.ItemId = Math.floor((Math.random() * 10000000) + 1);
+				vm.eventInfo.isNew = true
+				vm.eventInfo.isUpdated = false
+				vm.eventInfo.itemId = Math.floor((Math.random() * 10000000) + 1);
 				vm.eventList.push( vm.eventInfo)
 			} else {
-				vm.eventInfo.IsNew = false
-				vm.eventInfo.IsUpdated =true
+				vm.eventInfo.isNew = false
+				vm.eventInfo.isUpdated =true
 				let curIndex = -1 
 				vm.eventList.every( (item, index) => {
-					if (item.ItemId === vm.eventInfo.ItemId) {
+					if (item.itemId === vm.eventInfo.itemId) {
 						curIndex = index
 						return false
 					}
@@ -249,51 +316,65 @@ export default {
 			this.modalShow = true
 		},
 		showEditEvent(curEvent) {
-			console.log(curEvent)
 			this.eventInfo = {...curEvent}
 			this.flagInsert = "update"
 			this.modalShow = true
 		},
 		initEvent() {
 			this.eventInfo = {
-				ItemId: 0,
-				Summary: '',
-				Description: '',
-				FromDate: '',
-				ToDate: '',
-				FromTime: '',
-				ToTime: '',
-				Country: '',
-				Venue: '',
-				Categories: [],
-				IsHeadline: false,
-				IsTopStory: false,
-				IsNew: false,
-				IsUpdated: false,
-				IsProvisionalDate: false,
-				IsDeleted: false,
-				PrivateEvent: false,
-				StarredEvent: false
+				itemId: 0,
+				summary: '',
+				description: '',
+				startDate: '',
+				endDate: '',
+				startTime: '',
+				endTime: '',
+				countryName: '',
+				venue: '',
+				categories: [],
+				isHeadline: false,
+				isTopStory: false,
+				isProvisional: false,
+				isNew: false,
+				isUpdated: false,
+				
+				isDeleted: false,
+				isSelected: false,
+				privateEvent: false,
+				starredEvent: false,
 			}
 		},
 		showMore() {
-			this.cntEvent +=10
+			this.cntEvent += this.stepCnt
 			this.displayEventList = this.searchEventList.slice(0, this.cntEvent)
 		},
-		setPrivate() {
+		setSelPrivate() {
+			let vm = this
+			vm.statusPrivate = !vm.statusPrivate
 			this.displayEventList.filter( item => item.isSelected ).forEach( (item) => {
-				item.PrivateEvent = true
+				item.privateEvent = vm.statusPrivate
 			})
 		},
-		setStarred() {
+		setSelStarred() {
+			let vm = this
+			vm.statusStarred = !vm.statusStarred
 			this.displayEventList.filter( item => item.isSelected ).forEach( (item) => {
-				item.StarredEvent = true
+				item.starredEvent = vm.statusStarred
 			})
 		},
 		selectAll() {
+			let vm= this
+			vm.isAllSelected = !vm.isAllSelected
 			this.displayEventList.forEach( (item) => {
-				item.isSelected = true
+				item.isSelected = vm.isAllSelected
 			})
+			vm.displayEventList = vm.searchEventList.slice(0, vm.cntEvent)
+		},
+		showGoogleMap(curEvent) {
+			if (curEvent.location) {
+				this.location = curEvent.location
+				this.$refs['map-modal'].show()
+			}
 		}
 	}
 }
