@@ -1,49 +1,42 @@
-import axios from 'axios'
+import axios from "axios";
 
 export default {
   state: {
     data: [],
-    isLoading : false
+    isLoading: false
   },
   mutations: {
-    setEventData (state, data) {
-      // Object.keys(state).map(key => {
-      //   if (Array.isArray(data[key])) {
-      //     state[key] = data[key]
-      //     return state[key]
-      //   }
-      // })
-      state.data = data.data
-      state.isLoading = false
+    SET_EVENT_DATA(state, data) {
+      state.data = data.data;
+      state.isLoading = false;
     },
-    emptyEventData (state) {
-      // Object.keys(state).map(key => {
-      //   state[key] = []
-      //   return state[key]
-      // })
-      state.data = []
-      state.isLoading = true
+    EMPTY_EVENT_DATA(state) {
+      state.data = [];
+      state.isLoading = true;
+    },
+    SET_LOADING(state, payload) {
+      state.isLoading = payload;
     }
   },
   actions: {
-    getEventData () {
-      let vm = this
-      vm.commit('emptyEventData')
-      // vm.state.isLoading = true
-      axios.get('/json/event.json', {})
+    getEventData({ commit }) {
+      commit("EMPTY_EVENT_DATA");
+      commit("SET_LOADING", true);
+      axios
+        .get("/json/event.json", {})
         .then(response => {
           // Simulate server delay
-          setTimeout(function () {
-            if (response.data) { 
-              vm.commit('setEventData', response.data) 
+          setTimeout(function() {
+            if (response.data) {
+              commit("SET_EVENT_DATA", response.data);
             }
-            // vm.state.isLoading = false
-          }, 500)
+            commit("SET_LOADING", false);
+          }, 1500);
         })
         .catch(error => {
           // Error handling
-          console.log('Check for auth permission /n' + error.response)
-        })
+          console.log("Check for auth permission /n" + error.response);
+        });
     }
   }
-}
+};
