@@ -116,11 +116,11 @@
         </div>
       </div>
     </b-container>
-    <b-modal ref="map-modal" hide-footer title="Google Map" size="xl">
+    <b-modal ref="map-modal" hide-footer title="Google Map" size="x1">
       <div class="d-block text-center">
         <GmapMap
           :center="location"
-          :zoom="7"
+          :zoom="15"
           map-type-id="terrain"
           style="width: 100%; height:700px;"
         >
