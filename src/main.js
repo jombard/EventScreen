@@ -51,7 +51,7 @@ Vue.filter("msFormatDateTime", function(value) {
 });
 Vue.use(VueGoogleMaps, {
   load: {
-    key: "AIzaSyCQWEHV8wk0hIOg17AOzPo4A-6tiLdBIps"
+    key: process.env.GOOGLE_MAPS_API_KEY
   }
 });
 
