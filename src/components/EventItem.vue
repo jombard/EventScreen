@@ -1,12 +1,10 @@
 <template>
-  <b-card
-    no-body
-    class="item-card">
+  <b-card no-body class="item-card mb-1">
     <b-card-body>
       <b-card-title>
         <span>{{ eventData.summary }}</span>
         <b-link class="edit-link ml-2" v-if="eventData.starredEvent">
-          <font-awesome-icon :icon="['fas','heart']" />
+          <font-awesome-icon :icon="['fas','star']" />
         </b-link>
         <b-link class="edit-link ml-2" v-if="eventData.privateEvent">
           <font-awesome-icon :icon="['fas','lock']" />
@@ -15,21 +13,30 @@
           <font-awesome-icon icon="pencil-alt" />
         </b-link>
         <b-link class="edit-link float-right" @click="eventData.isSelected = !eventData.isSelected">
-          <font-awesome-icon :icon=" eventData.isSelected ?  ['far','check-square'] : ['far','square']" />
-      </b-link>
+          <font-awesome-icon
+            :icon=" eventData.isSelected ?  ['far','check-square'] : ['far','square']"
+          />
+        </b-link>
       </b-card-title>
       <b-card-text v-if="viewMode==2" class="fix-desc">{{ eventData.description }}</b-card-text>
       <b-card-text class="mb-1">
-        <font-awesome-icon icon="map-marker-alt" class="mr-2" :class="eventData.location ? 'text-primary' : ''" @click="$emit('showGoogleMap')"/>
+        <font-awesome-icon
+          icon="map-marker-alt"
+          class="mr-2"
+          :class="eventData.location ? 'text-primary' : ''"
+          @click="$emit('showGoogleMap')"
+        />
         {{ eventData.venue }} {{ eventData.countryName }}
         <font-awesome-icon icon="clock" class="ml-5 mr-2" />
         {{ eventData.startDate | msFormatDateTime }}
-        <span v-if="eventData.startDate!=eventData.endDate"> - {{ eventData.endDate | msFormatDateTime }}</span>
+        <span
+          v-if="eventData.startDate!=eventData.endDate"
+        >- {{ eventData.endDate | msFormatDateTime }}</span>
       </b-card-text>
       <b-card-text v-if="viewMode==2">
         <font-awesome-icon icon="tags" class="mr-2" />
         <span v-for="(cat,index) in eventData.categories" :key="index">
-          <span v-if="index>0">, </span>
+          <span v-if="index>0">,</span>
           {{ cat.categoryName }}
         </span>
       </b-card-text>
@@ -40,7 +47,6 @@
         <li v-if="eventData.isHeadline" class="tag-headline">HeadLine</li>
         <li v-if="eventData.isTopStory" class="tag-topstory">TopStory</li>
       </ul>
-      
     </b-card-body>
   </b-card>
 </template>
@@ -56,7 +62,7 @@ export default {
       // isSelected: this.eventData.isSelected,
       // starredEvent: this.eventData.starredEvent,
       // privateEvent: this.eventData.privateEvent
-    }
-  },
+    };
+  }
 };
 </script>
