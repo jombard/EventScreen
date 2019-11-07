@@ -84,7 +84,7 @@
             :ok-title=" flagInsert == 'new' ? 'Create Event' : 'Update Event'"
             @ok="saveEvent()"
           >
-            <event :eventInfo="eventInfo"></event>
+            <event-form :eventInfo="eventInfo"></event-form>
           </b-modal>
         </b-card>
         <div v-if="isLoading" class="text-center mt-5">
@@ -134,7 +134,7 @@
 import moment from "moment";
 import { mapState } from "vuex";
 import EventItem from "./EventItem";
-import Event from "./Event";
+import EventForm from "./EventForm";
 import MultiSelect from "vue-multiselect";
 
 export default {
@@ -142,7 +142,7 @@ export default {
   components: {
     MultiSelect,
     EventItem,
-    Event
+    EventForm
   },
   computed: {
     ...mapState({
