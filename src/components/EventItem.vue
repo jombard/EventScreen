@@ -12,7 +12,7 @@
         <b-link class="edit-link float-right" @click="$emit('showEditEvent')">
           <font-awesome-icon icon="pencil-alt" />
         </b-link>
-        <b-link class="edit-link float-right" @click="eventData.isSelected = !eventData.isSelected">
+        <b-link class="edit-link float-right" @click="eventData.isSelected = !eventData.isSelected, $emit('changeSelected')">
           <font-awesome-icon
             :icon=" eventData.isSelected ?  ['far','check-square'] : ['far','square']"
           />

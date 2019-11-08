@@ -1,6 +1,7 @@
 "use strict";
 
 import Vue from 'vue';
+
 import axios from "axios";
 
 // Full config:  https://github.com/axios/axios#request-config
@@ -39,7 +40,7 @@ _axios.interceptors.response.use(
   }
 );
 
-Plugin.install = function(Vue, options) {
+Plugin.install = function(Vue, options) {// eslint-disable-line no-unused-vars
   Vue.axios = _axios;
   window.axios = _axios;
   Object.defineProperties(Vue.prototype, {
