@@ -2,7 +2,8 @@
   <b-card no-body class="item-card mb-1">
     <b-card-body>
       <b-card-title>
-        <span>{{ eventData.summary }}</span>
+        <span v-if="eventData.summary">{{ eventData.summary }}</span>
+        <span v-else>{{ eventData.description }}</span>
         <b-link class="edit-link ml-2" v-if="eventData.starredEvent">
           <font-awesome-icon :icon="['fas','star']" />
         </b-link>
@@ -18,8 +19,22 @@
           />
         </b-link>
       </b-card-title>
+      <div class="tags mb-2">
+        <b-badge variant="primary" v-if="eventData.isHeadline">Headline</b-badge>
+        <b-badge variant="secondary" v-if="eventData.isTopStory">Top Story</b-badge>
+        <b-badge variant="info" v-if="eventData.isNew">New</b-badge>
+        <b-badge variant="success" v-if="eventData.isUpdated">Updated</b-badge>
+        <b-badge variant="warning" v-if="eventData.isProvisional">Provisional</b-badge>
+      </div>
       <b-card-text v-if="viewMode==2" class="fix-desc">{{ eventData.description }}</b-card-text>
-      <b-card-text class="mb-1">
+      <b-card-text>
+        <font-awesome-icon icon="clock" class="mr-2" />
+        {{ eventData.startDate | msFormatDateTime }}
+        <span
+          v-if="eventData.startDate!=eventData.endDate"
+        >- {{ eventData.endDate | msFormatDateTime }}</span>
+      </b-card-text>
+      <b-card-text v-if="viewMode==2">
         <font-awesome-icon
           icon="map-marker-alt"
           class="mr-2"
@@ -27,11 +42,6 @@
           @click="$emit('showGoogleMap')"
         />
         {{ eventData.venue }} {{ eventData.countryName }}
-        <font-awesome-icon icon="clock" class="ml-5 mr-2" />
-        {{ eventData.startDate | msFormatDateTime }}
-        <span
-          v-if="eventData.startDate!=eventData.endDate"
-        >- {{ eventData.endDate | msFormatDateTime }}</span>
       </b-card-text>
       <b-card-text v-if="viewMode==2">
         <font-awesome-icon icon="tags" class="mr-2" />
@@ -40,13 +50,6 @@
           {{ cat.categoryName }}
         </span>
       </b-card-text>
-      <ul class="tags" v-if="viewMode==2">
-        <li v-if="eventData.isProvisional" class="tag-provisional">Provisional</li>
-        <li v-if="eventData.isNew" class="tag-new">New</li>
-        <li v-if="eventData.isUpdated" class="tag-updated">Updated</li>
-        <li v-if="eventData.isHeadline" class="tag-headline">HeadLine</li>
-        <li v-if="eventData.isTopStory" class="tag-topstory">TopStory</li>
-      </ul>
     </b-card-body>
   </b-card>
 </template>
