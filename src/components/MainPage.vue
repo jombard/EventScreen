@@ -16,6 +16,7 @@
             placeholder="Select Period"
             track-by="value"
             label="text"
+            @input="searchEvent"
           ></multi-select>
           <div v-if="selPeriod.value == 'custom'" class="ml-2 mt-1">
             <b-form-group label="From">
@@ -37,9 +38,10 @@
             placeholder="Select Category"
             track-by="categoryId"
             label="categoryName"
+            @input="searchEvent"
           ></multi-select>
         </b-form-group>
-        <b-button variant="outline-primary" @click="searchEvent()">Search Events</b-button>
+        <!-- <b-button variant="outline-primary" @click="searchEvent()">Search Events</b-button> -->
       </b-card>
       <div class="event-content pl-2">
         <b-card class="mb-2">
@@ -47,16 +49,6 @@
             class="d-block font-weight-bold mt-2 float-left"
           >{{ searchEventList.length }} Results</span>
           <b-button class="float-right" variant="primary" @click="showCreateEvent()">Add Event</b-button>
-          <b-button
-            class="float-right mr-2"
-            variant="outline-primary"
-            @click="setSelPrivate()"
-          >Set Private</b-button>
-          <b-button
-            class="float-right mr-2"
-            variant="outline-primary"
-            @click="setSelStarred()"
-          >Set Starred</b-button>
           <b-link class="edit-link float-right mr-2" @click="selectAll">
             <font-awesome-icon :icon=" isAllSelected ?  ['far','check-square'] : ['far','square']" />
           </b-link>
@@ -104,15 +96,16 @@
               :eventData="event"
               @showEditEvent="showEditEvent(event)"
               @showGoogleMap="showGoogleMap(event)"
+              @changeSelected="changeSelected"
               :viewMode="statusView"
             ></event-item>
           </a>
           <b-card v-if="displayEventList.length == 0">
             <b-card-text>Sorry, we have not any events.</b-card-text>
           </b-card>
-          <div v-if="cntEvent< searchEventList.length" class="text-center my-1">
+          <!-- <div v-if="cntEvent< searchEventList.length" class="text-center my-1">
             <b-button @click="showMore()" variant="info">Load More</b-button>
-          </div>
+          </div> -->
         </div>
       </div>
     </b-container>
@@ -128,6 +121,20 @@
         </GmapMap>
       </div>
     </b-modal>
+    <vm-back-top style="bottom:70px;"></vm-back-top>
+
+    <footer v-if="isAllSelected || atLeastSelected" class="footer bg-light pt-2 pr-4">
+      <b-button
+        class="float-right mr-2"
+        variant="outline-primary"
+        @click="setSelPrivate()"
+      >Set Private</b-button>
+      <b-button
+        class="float-right mr-2"
+        variant="outline-primary"
+        @click="setSelStarred()"
+      >Set Starred</b-button>
+    </footer>
   </div>
 </template>
 <script>
@@ -150,7 +157,7 @@ export default {
       eventList: state => state.event.data,
       countryList: state => state.country.data,
       isLoading: state => state.event.isLoading
-    })
+    }),
   },
   data() {
     return {
@@ -208,20 +215,38 @@ export default {
       statusStarred: false,
       statusPrivate: false,
       statusView: 2,
-      location: {}
+      location: {},
+      atLeastSelected: false
     };
   },
   created() {
     this.$store.dispatch("getCategoryData");
     this.$store.dispatch("getEventData");
     this.$store.dispatch("getCountryData");
+    window.addEventListener('scroll', this.handleScroll);
+  },
+  destroyed () {
+    window.removeEventListener('scroll', this.handleScroll);
   },
   watch: {
     isLoading: function() {
       if (!this.isLoading) {
         this.searchEvent();
       }
-    }
+    },
+    searchText: function() {
+      this.searchEvent()
+    },
+    startDate: function() {
+      if (this.startDate && this.endDate) {
+        this.searchEvent()
+      }
+    },
+    endDate: function() {
+      if (this.startDate && this.endDate) {
+        this.searchEvent()
+      }
+    },
   },
   methods: {
     searchEvent() {
@@ -367,6 +392,7 @@ export default {
     },
     showMore() {
       this.cntEvent += this.stepCnt;
+      if (this.cntEvent>this.searchEventList.length) this.cntEvent = this.searchEventList.length
       this.displayEventList = this.searchEventList.slice(0, this.cntEvent);
     },
     setSelPrivate() {
@@ -400,6 +426,17 @@ export default {
         this.location = curEvent.location;
         this.$refs["map-modal"].show();
       }
+    },
+    handleScroll() {
+      let bottomOfWindow = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop) + window.innerHeight === document.documentElement.offsetHeight
+      if (bottomOfWindow) {
+        this.showMore()
+      }
+    },
+    changeSelected() {
+      this.atLeastSelected = this.displayEventList.some( item => {
+        return item.isSelected;
+      })
     }
   }
 };
