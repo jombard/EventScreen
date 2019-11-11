@@ -23,6 +23,7 @@ import {
 } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import * as VueGoogleMaps from "vue2-google-maps";
+import VmBackTop from 'vue-multiple-back-top';
 
 library.add(
   faClock,
@@ -40,6 +41,7 @@ library.add(
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
+Vue.component('vm-back-top', VmBackTop);
 
 import "vue-multiselect/dist/vue-multiselect.min.css";
 import "./assets/scss/custom.scss";
