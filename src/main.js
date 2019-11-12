@@ -50,11 +50,24 @@ Vue.component("vm-back-top", VmBackTop);
 import "vue-multiselect/dist/vue-multiselect.min.css";
 import "./assets/scss/custom.scss";
 
+Vue.filter("msFormatDate", function(value) {
+  if (value) {
+    return moment(value).format("LL");
+  }
+});
+
+Vue.filter("msFormatTime", function(value) {
+  if (value) {
+    return moment(value).format("LTS");
+  }
+});
+
 Vue.filter("msFormatDateTime", function(value) {
   if (value) {
     return moment(value).format("LL LTS");
   }
 });
+
 Vue.use(VueGoogleMaps, {
   load: {
     key: process.env.VUE_APP_GOOGLE_MAPS_API_KEY

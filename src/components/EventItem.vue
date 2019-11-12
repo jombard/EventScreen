@@ -35,10 +35,11 @@
           <b-card-text>
             <span class="mr-4">
               <font-awesome-icon icon="clock" class="mr-2" />
-              {{ eventData.startDate | msFormatDateTime }}
+              {{ eventData.startDate | msFormatDate }}
+              <span v-if="eventData.time">{{ eventData.time | msFormatTime }}</span>
               <span
                 v-if="eventData.startDate!=eventData.endDate"
-              >- {{ eventData.endDate | msFormatDateTime }}</span>
+              >- {{ eventData.endDate | msFormatDate }}</span>
             </span>
             <span>
               <font-awesome-icon
