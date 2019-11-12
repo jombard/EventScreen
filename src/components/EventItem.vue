@@ -4,16 +4,19 @@
       <b-card-title>
         <span v-if="eventData.summary">{{ eventData.summary }}</span>
         <span v-else>{{ eventData.description }}</span>
-        <b-link class="edit-link ml-2" v-if="eventData.starredEvent">
+        <b-link class="m-2" v-if="eventData.starredEvent">
           <font-awesome-icon :icon="['fas','star']" />
         </b-link>
-        <b-link class="edit-link ml-2" v-if="eventData.privateEvent">
+        <b-link class="m-2" v-if="eventData.privateEvent">
           <font-awesome-icon :icon="['fas','lock']" />
         </b-link>
-        <b-link class="edit-link float-right" @click="$emit('showEditEvent')">
+        <b-link class="m-2 float-right" @click="$emit('showEditEvent')">
           <font-awesome-icon icon="pencil-alt" />
         </b-link>
-        <b-link class="edit-link float-right" @click="eventData.isSelected = !eventData.isSelected, $emit('changeSelected')">
+        <b-link
+          class="m-2 float-right"
+          @click="eventData.isSelected = !eventData.isSelected, $emit('changeSelected')"
+        >
           <font-awesome-icon
             :icon=" eventData.isSelected ?  ['far','check-square'] : ['far','square']"
           />
@@ -26,30 +29,53 @@
         <b-badge variant="success" v-if="eventData.isUpdated">Updated</b-badge>
         <b-badge variant="warning" v-if="eventData.isProvisional">Provisional</b-badge>
       </div>
-      <b-card-text v-if="viewMode==2" class="fix-desc">{{ eventData.description }}</b-card-text>
-      <b-card-text>
-        <font-awesome-icon icon="clock" class="mr-2" />
-        {{ eventData.startDate | msFormatDateTime }}
-        <span
-          v-if="eventData.startDate!=eventData.endDate"
-        >- {{ eventData.endDate | msFormatDateTime }}</span>
-      </b-card-text>
-      <b-card-text v-if="viewMode==2">
-        <font-awesome-icon
-          icon="map-marker-alt"
-          class="mr-2"
-          :class="eventData.location ? 'text-primary' : ''"
-          @click="$emit('showGoogleMap')"
-        />
-        {{ eventData.venue }} {{ eventData.countryName }}
-      </b-card-text>
-      <b-card-text v-if="viewMode==2">
-        <font-awesome-icon icon="tags" class="mr-2" />
-        <span v-for="(cat,index) in eventData.categories" :key="index">
-          <span v-if="index>0">,</span>
-          {{ cat.categoryName }}
-        </span>
-      </b-card-text>
+      <b-row>
+        <b-col md="8">
+          <b-card-text v-if="viewMode==2" class="fix-desc">{{ eventData.description }}</b-card-text>
+          <b-card-text>
+            <span class="mr-4">
+              <font-awesome-icon icon="clock" class="mr-2" />
+              {{ eventData.startDate | msFormatDateTime }}
+              <span
+                v-if="eventData.startDate!=eventData.endDate"
+              >- {{ eventData.endDate | msFormatDateTime }}</span>
+            </span>
+            <span>
+              <font-awesome-icon
+                icon="map-marker-alt"
+                class="mr-2"
+                :class="eventData.location ? 'text-primary' : ''"
+                @click="$emit('showGoogleMap')"
+              />
+              {{ eventData.venue }} {{ eventData.countryName }}
+            </span>
+          </b-card-text>
+          <b-card-text v-if="viewMode==2">
+            <span>
+              <font-awesome-icon icon="tags" class="mr-2" />
+              <span v-for="(cat,index) in eventData.categories" :key="index">
+                <span v-if="index>0">,</span>
+                {{ cat.categoryName }}
+              </span>
+            </span>
+          </b-card-text>
+        </b-col>
+        <b-col md="4">
+          <strong v-if="viewMode==2">Contacts</strong>
+          <div v-for="c in eventData.contacts" :key="c.pressContactID">
+            <div>
+              <font-awesome-icon icon="user" class="mr-1" />
+              <a
+                :href="'mailto:' + c.pressContactEmail"
+              >{{ c.pressContactName || c.pressContactOffice }}</a>
+            </div>
+            <div v-if="c.pressContactTelephone">
+              <font-awesome-icon icon="phone" class="mr-1" />
+              {{ c.pressContactTelephone }}
+            </div>
+          </div>
+        </b-col>
+      </b-row>
     </b-card-body>
   </b-card>
 </template>
@@ -58,14 +84,6 @@ export default {
   props: {
     eventData: Object,
     viewMode: Number
-  },
-  data() {
-    return {
-      // isActive: this.eventData.isSelected
-      // isSelected: this.eventData.isSelected,
-      // starredEvent: this.eventData.starredEvent,
-      // privateEvent: this.eventData.privateEvent
-    };
   }
 };
 </script>

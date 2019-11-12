@@ -103,9 +103,6 @@
           <b-card v-if="displayEventList.length == 0">
             <b-card-text>Sorry, we have not any events.</b-card-text>
           </b-card>
-          <!-- <div v-if="cntEvent< searchEventList.length" class="text-center my-1">
-            <b-button @click="showMore()" variant="info">Load More</b-button>
-          </div> -->
         </div>
       </div>
     </b-container>
@@ -134,6 +131,9 @@
         variant="outline-primary"
         @click="setSelStarred()"
       >Set Starred</b-button>
+      <span class="d-block mt-2 mr-2 float-right">
+        <strong>{{ selectedEvents.length }} Selected</strong>
+      </span>
     </footer>
   </div>
 </template>
@@ -158,6 +158,9 @@ export default {
       countryList: state => state.country.data,
       isLoading: state => state.event.isLoading
     }),
+    selectedEvents() {
+      return this.displayEventList.filter(item => item.isSelected);
+    }
   },
   data() {
     return {
@@ -223,10 +226,10 @@ export default {
     this.$store.dispatch("getCategoryData");
     this.$store.dispatch("getEventData");
     this.$store.dispatch("getCountryData");
-    window.addEventListener('scroll', this.handleScroll);
+    window.addEventListener("scroll", this.handleScroll);
   },
-  destroyed () {
-    window.removeEventListener('scroll', this.handleScroll);
+  destroyed() {
+    window.removeEventListener("scroll", this.handleScroll);
   },
   watch: {
     isLoading: function() {
@@ -235,18 +238,18 @@ export default {
       }
     },
     searchText: function() {
-      this.searchEvent()
+      this.searchEvent();
     },
     startDate: function() {
       if (this.startDate && this.endDate) {
-        this.searchEvent()
+        this.searchEvent();
       }
     },
     endDate: function() {
       if (this.startDate && this.endDate) {
-        this.searchEvent()
+        this.searchEvent();
       }
-    },
+    }
   },
   methods: {
     searchEvent() {
@@ -294,8 +297,11 @@ export default {
       vm.eventList.forEach(item => {
         if (vm.searchText) {
           if (
-            item.summary.search(vm.searchText) === -1 &&
-            item.description.search(vm.searchText) === -1
+            item.summary.toLowerCase().search(vm.searchText.toLowerCase()) ===
+              -1 &&
+            item.description
+              .toLowerCase()
+              .search(vm.searchText.toLowerCase()) === -1
           )
             return;
         }
@@ -392,7 +398,8 @@ export default {
     },
     showMore() {
       this.cntEvent += this.stepCnt;
-      if (this.cntEvent>this.searchEventList.length) this.cntEvent = this.searchEventList.length
+      if (this.cntEvent > this.searchEventList.length)
+        this.cntEvent = this.searchEventList.length;
       this.displayEventList = this.searchEventList.slice(0, this.cntEvent);
     },
     setSelPrivate() {
@@ -428,15 +435,22 @@ export default {
       }
     },
     handleScroll() {
-      let bottomOfWindow = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop) + window.innerHeight === document.documentElement.offsetHeight
+      let bottomOfWindow =
+        Math.max(
+          window.pageYOffset,
+          document.documentElement.scrollTop,
+          document.body.scrollTop
+        ) +
+          window.innerHeight ===
+        document.documentElement.offsetHeight;
       if (bottomOfWindow) {
-        this.showMore()
+        this.showMore();
       }
     },
     changeSelected() {
-      this.atLeastSelected = this.displayEventList.some( item => {
+      this.atLeastSelected = this.displayEventList.some(item => {
         return item.isSelected;
-      })
+      });
     }
   }
 };
