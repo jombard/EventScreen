@@ -28,6 +28,10 @@
         <b-badge variant="info" v-if="eventData.isNew">New</b-badge>
         <b-badge variant="success" v-if="eventData.isUpdated">Updated</b-badge>
         <b-badge variant="warning" v-if="eventData.isProvisional">Provisional</b-badge>
+        <b-badge
+          variant="danger"
+          v-if="eventData.embargoTime"
+        >Embargo {{ eventData.embargoTime | msFormatDateTime }}</b-badge>
       </div>
       <b-row>
         <b-col md="8">
@@ -36,7 +40,9 @@
             <span class="mr-4">
               <font-awesome-icon icon="clock" class="mr-2" />
               {{ eventData.startDate | msFormatDate }}
-              <span v-if="eventData.time">{{ eventData.time | msFormatTime }}</span>
+              <span
+                v-if="eventData.time"
+              >{{ eventData.time | msFormatTime }}</span>
               <span
                 v-if="eventData.startDate!=eventData.endDate"
               >- {{ eventData.endDate | msFormatDate }}</span>
