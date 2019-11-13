@@ -14,12 +14,13 @@ import {
   faPencilAlt,
   faLock,
   faEquals,
-  faAlignJustify
+  faAlignJustify,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faHeart as farHeart,
   faSquare,
-  faCheckSquare
+  faCheckSquare,
+  faCalendarAlt
 } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import * as VueGoogleMaps from "vue2-google-maps";
@@ -37,7 +38,8 @@ library.add(
   faCheckSquare,
   faSquare,
   faEquals,
-  faAlignJustify
+  faAlignJustify,
+  faCalendarAlt
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
