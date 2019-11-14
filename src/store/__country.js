@@ -1,40 +1,42 @@
-import axios from 'axios'
+import axios from "axios";
 export default {
   state: {
     data: []
   },
   mutations: {
-    setCountryData (state, data) {
+    SET_COUNTRY_DATA(state, data) {
       Object.keys(state).map(key => {
         if (Array.isArray(data[key])) {
-          state[key] = data[key]
-          return state[key]
+          state[key] = data[key];
+          return state[key];
         }
-      })
+      });
     },
-    emptyCountryData (state) {
+    EMPTY_COUNTRY_DATA(state) {
       Object.keys(state).map(key => {
-        state[key] = []
-        return state[key]
-      })
+        state[key] = [];
+        return state[key];
+      });
     }
   },
   actions: {
-    getCountryData () {
-      let vm = this
-      vm.commit('emptyCountryData')
+    getCountryData({ commit }) {
+      commit("EMPTY_COUNTRY_DATA");
 
-      axios.get('/json/country.json',{})
+      axios
+        .get("/json/country.json", {})
         .then(response => {
           // Simulate server delay
-          setTimeout(function () {
-            if (response.data) { vm.commit('setCountryData', response.data) }
-          }, 500)
+          setTimeout(function() {
+            if (response.data) {
+              commit("SET_COUNTRY_DATA", response.data);
+            }
+          }, 1500);
         })
         .catch(error => {
           // Error handling
-          console.log('Check for auth permission /n' + error.response)
-        })
+          console.log("Check for auth permission /n" + error.response);
+        });
     }
   }
-}
+};

@@ -41,7 +41,6 @@
             @input="searchEvent"
           ></multi-select>
         </b-form-group>
-        <!-- <b-button variant="outline-primary" @click="searchEvent()">Search Events</b-button> -->
       </b-card>
       <div class="event-content pl-2">
         <b-card class="mb-2">
@@ -79,11 +78,11 @@
           </div>
           <b-modal
             v-model="modalShow"
-            title="Event"
+            title="Event Form"
             :ok-title=" flagInsert == 'new' ? 'Create Event' : 'Update Event'"
             @ok="saveEvent()"
           >
-            <event :eventInfo="eventInfo"></event>
+            <event-form :eventInfo="eventInfo"></event-form>
           </b-modal>
         </b-card>
         <div v-if="isLoading" class="text-center mt-5">
@@ -117,20 +116,20 @@
               ></event-item>
             </a>
             <b-card v-if="displayEventList.length == 0">
-              <b-card-text>Sorry, we have not any events.</b-card-text>
+              <b-card-text>
+                <em>No events to display.</em>
+              </b-card-text>
             </b-card>
-            <!-- <div v-if="cntEvent< searchEventList.length" class="text-center my-1">
-              <b-button @click="showMore()" variant="info">Load More</b-button>
-            </div> -->
           </div>
         </div>
       </div>
     </b-container>
+
     <b-modal ref="map-modal" hide-footer title="Google Map" size="xl">
       <div class="d-block text-center">
         <GmapMap
           :center="location"
-          :zoom="7"
+          :zoom="15"
           map-type-id="terrain"
           style="width: 100%; height:700px;"
         >
@@ -138,6 +137,7 @@
         </GmapMap>
       </div>
     </b-modal>
+
     <vm-back-top style="bottom:70px;"></vm-back-top>
 
     <footer v-if="isAllSelected || atLeastSelected" class="footer bg-light pt-2 pr-4">
@@ -151,6 +151,9 @@
         variant="outline-primary"
         @click="setSelStarred()"
       >Set Starred</b-button>
+      <span class="d-block mt-2 mr-2 float-right">
+        <strong>{{ selectedEvents.length }} Selected</strong>
+      </span>
     </footer>
   </div>
 </template>
@@ -158,7 +161,7 @@
 import moment from "moment";
 import { mapState } from "vuex";
 import EventItem from "./EventItem";
-import Event from "./Event";
+import EventForm from "./EventForm";
 import MultiSelect from "vue-multiselect";
 import FullCalendar from '@fullcalendar/vue'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -167,8 +170,8 @@ export default {
   components: {
     MultiSelect,
     EventItem,
-    Event,
-    FullCalendar 
+    FullCalendar,
+    EventForm
   },
   computed: {
     ...mapState({
@@ -177,6 +180,9 @@ export default {
       countryList: state => state.country.data,
       isLoading: state => state.event.isLoading
     }),
+    selectedEvents() {
+      return this.displayEventList.filter(item => item.isSelected);
+    }
   },
   data() {
     return {
@@ -227,8 +233,8 @@ export default {
       modalShow: false,
       eventInfo: {},
       flagInsert: "new",
-      cntEvent: 10,
-      stepCnt: 10,
+      pageSize: 10,
+      stepCount: 10,
       displayEventList: [],
       isAllSelected: false,
       statusStarred: false,
@@ -244,10 +250,10 @@ export default {
     this.$store.dispatch("getCategoryData");
     this.$store.dispatch("getEventData");
     this.$store.dispatch("getCountryData");
-    window.addEventListener('scroll', this.handleScroll);
+    window.addEventListener("scroll", this.handleScroll);
   },
-  destroyed () {
-    window.removeEventListener('scroll', this.handleScroll);
+  destroyed() {
+    window.removeEventListener("scroll", this.handleScroll);
   },
   watch: {
     isLoading: function() {
@@ -256,18 +262,18 @@ export default {
       }
     },
     searchText: function() {
-      this.searchEvent()
+      this.searchEvent();
     },
     startDate: function() {
       if (this.startDate && this.endDate) {
-        this.searchEvent()
+        this.searchEvent();
       }
     },
     endDate: function() {
       if (this.startDate && this.endDate) {
-        this.searchEvent()
+        this.searchEvent();
       }
-    },
+    }
   },
   methods: {
     searchEvent() {
@@ -316,8 +322,11 @@ export default {
       vm.eventList.forEach(item => {
         if (vm.searchText) {
           if (
-            item.summary.search(vm.searchText) === -1 &&
-            item.description.search(vm.searchText) === -1
+            item.summary.toLowerCase().search(vm.searchText.toLowerCase()) ===
+              -1 &&
+            item.description
+              .toLowerCase()
+              .search(vm.searchText.toLowerCase()) === -1
           )
             return;
         }
@@ -353,7 +362,7 @@ export default {
           description: item.description
         })
       });
-      vm.displayEventList = vm.searchEventList.slice(0, vm.cntEvent);
+      vm.displayEventList = vm.searchEventList.slice(0, vm.pageSize);
     },
     saveEvent() {
       let vm = this;
@@ -421,9 +430,11 @@ export default {
       };
     },
     showMore() {
-      this.cntEvent += this.stepCnt;
-      if (this.cntEvent>this.searchEventList.length) this.cntEvent = this.searchEventList.length
-      this.displayEventList = this.searchEventList.slice(0, this.cntEvent);
+      this.pageSize += this.stepCount;
+      if (this.pageSize > this.searchEventList.length) {
+        this.pageSize = this.searchEventList.length;
+      }
+      this.displayEventList = this.searchEventList.slice(0, this.pageSize);
     },
     setSelPrivate() {
       let vm = this;
@@ -449,7 +460,7 @@ export default {
       this.displayEventList.forEach(item => {
         item.isSelected = vm.isAllSelected;
       });
-      vm.displayEventList = vm.searchEventList.slice(0, vm.cntEvent);
+      vm.displayEventList = vm.searchEventList.slice(0, vm.pageSize);
     },
     showGoogleMap(curEvent) {
       if (curEvent.location) {
@@ -458,13 +469,20 @@ export default {
       }
     },
     handleScroll() {
-      let bottomOfWindow = Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop) + window.innerHeight === document.documentElement.offsetHeight
+      let bottomOfWindow =
+        Math.max(
+          window.pageYOffset,
+          document.documentElement.scrollTop,
+          document.body.scrollTop
+        ) +
+          window.innerHeight ===
+        document.documentElement.offsetHeight;
       if (bottomOfWindow) {
-        this.showMore()
+        this.showMore();
       }
     },
     changeSelected() {
-      this.atLeastSelected = this.displayEventList.some( item => {
+      this.atLeastSelected = this.displayEventList.some(item => {
         return item.isSelected;
       })
     },
