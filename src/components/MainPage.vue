@@ -41,7 +41,6 @@
             @input="searchEvent"
           ></multi-select>
         </b-form-group>
-        <!-- <b-button variant="outline-primary" @click="searchEvent()">Search Events</b-button> -->
       </b-card>
       <div class="event-content pl-2">
         <b-card class="mb-2">
@@ -72,7 +71,7 @@
           </div>
           <b-modal
             v-model="modalShow"
-            title="Event"
+            title="Event Form"
             :ok-title=" flagInsert == 'new' ? 'Create Event' : 'Update Event'"
             @ok="saveEvent()"
           >
@@ -101,12 +100,15 @@
             ></event-item>
           </a>
           <b-card v-if="displayEventList.length == 0">
-            <b-card-text>Sorry, we have not any events.</b-card-text>
+            <b-card-text>
+              <em>No events to display.</em>
+            </b-card-text>
           </b-card>
         </div>
       </div>
     </b-container>
-    <b-modal ref="map-modal" hide-footer title="Google Map" size="x1">
+
+    <b-modal ref="map-modal" hide-footer title="Google Map" size="xl">
       <div class="d-block text-center">
         <GmapMap
           :center="location"
@@ -118,6 +120,7 @@
         </GmapMap>
       </div>
     </b-modal>
+
     <vm-back-top style="bottom:70px;"></vm-back-top>
 
     <footer v-if="isAllSelected || atLeastSelected" class="footer bg-light pt-2 pr-4">
@@ -211,8 +214,8 @@ export default {
       modalShow: false,
       eventInfo: {},
       flagInsert: "new",
-      cntEvent: 10,
-      stepCnt: 10,
+      pageSize: 10,
+      stepCount: 10,
       displayEventList: [],
       isAllSelected: false,
       statusStarred: false,
@@ -329,7 +332,7 @@ export default {
         if (!item.privateEvent) item.privateEvent = false;
         vm.searchEventList.push(item);
       });
-      vm.displayEventList = vm.searchEventList.slice(0, vm.cntEvent);
+      vm.displayEventList = vm.searchEventList.slice(0, vm.pageSize);
     },
     saveEvent() {
       let vm = this;
@@ -397,10 +400,11 @@ export default {
       };
     },
     showMore() {
-      this.cntEvent += this.stepCnt;
-      if (this.cntEvent > this.searchEventList.length)
-        this.cntEvent = this.searchEventList.length;
-      this.displayEventList = this.searchEventList.slice(0, this.cntEvent);
+      this.pageSize += this.stepCount;
+      if (this.pageSize > this.searchEventList.length) {
+        this.pageSize = this.searchEventList.length;
+      }
+      this.displayEventList = this.searchEventList.slice(0, this.pageSize);
     },
     setSelPrivate() {
       let vm = this;
@@ -426,7 +430,7 @@ export default {
       this.displayEventList.forEach(item => {
         item.isSelected = vm.isAllSelected;
       });
-      vm.displayEventList = vm.searchEventList.slice(0, vm.cntEvent);
+      vm.displayEventList = vm.searchEventList.slice(0, vm.pageSize);
     },
     showGoogleMap(curEvent) {
       if (curEvent.location) {
