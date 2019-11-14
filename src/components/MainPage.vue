@@ -62,11 +62,18 @@
               <font-awesome-icon icon="align-justify" />
             </b-link>
             <b-link
-              class="view-link mr-5"
+              class="view-link mr-2"
               :class="statusView == 1 ? 'active' : ''"
               @click="statusView = 1"
             >
               <font-awesome-icon icon="equals" />
+            </b-link>
+            <b-link
+              class="view-link mr-5"
+              :class="statusView == 3 ? 'active' : ''"
+              @click="statusView = 3"
+            >
+              <font-awesome-icon :icon="['far','calendar-alt']" />
             </b-link>
           </div>
           <b-modal
@@ -90,20 +97,30 @@
           </div>
         </div>
         <div v-else>
-          <a v-for="(event, index) in displayEventList" :key="index">
-            <event-item
-              :eventData="event"
-              @showEditEvent="showEditEvent(event)"
-              @showGoogleMap="showGoogleMap(event)"
-              @changeSelected="changeSelected"
-              :viewMode="statusView"
-            ></event-item>
-          </a>
-          <b-card v-if="displayEventList.length == 0">
-            <b-card-text>
-              <em>No events to display.</em>
-            </b-card-text>
-          </b-card>
+          <div v-if="statusView==3">
+            <FullCalendar 
+              defaultView="dayGridMonth" 
+              :plugins="calendarPlugins" 
+              :events="calendarViewData"
+              @eventClick="showCalendarEvent"
+            />
+          </div>
+          <div v-else>
+            <a v-for="(event, index) in displayEventList" :key="index">
+              <event-item
+                :eventData="event"
+                @showEditEvent="showEditEvent(event)"
+                @showGoogleMap="showGoogleMap(event)"
+                @changeSelected="changeSelected"
+                :viewMode="statusView"
+              ></event-item>
+            </a>
+            <b-card v-if="displayEventList.length == 0">
+              <b-card-text>
+                <em>No events to display.</em>
+              </b-card-text>
+            </b-card>
+          </div>
         </div>
       </div>
     </b-container>
@@ -146,12 +163,14 @@ import { mapState } from "vuex";
 import EventItem from "./EventItem";
 import EventForm from "./EventForm";
 import MultiSelect from "vue-multiselect";
-
+import FullCalendar from '@fullcalendar/vue'
+import dayGridPlugin from '@fullcalendar/daygrid'
 export default {
   name: "MainPage",
   components: {
     MultiSelect,
     EventItem,
+    FullCalendar,
     EventForm
   },
   computed: {
@@ -222,7 +241,9 @@ export default {
       statusPrivate: false,
       statusView: 2,
       location: {},
-      atLeastSelected: false
+      atLeastSelected: false,
+      calendarPlugins: [ dayGridPlugin ],
+      calendarViewData: [],
     };
   },
   created() {
@@ -297,6 +318,7 @@ export default {
       eDate = eDate.format("YYYY-MM-DDT23:59:59");
 
       vm.searchEventList = [];
+      vm.calendarViewData = [];
       vm.eventList.forEach(item => {
         if (vm.searchText) {
           if (
@@ -331,6 +353,14 @@ export default {
         if (!item.starredEvent) item.starredEvent = false;
         if (!item.privateEvent) item.privateEvent = false;
         vm.searchEventList.push(item);
+
+        vm.calendarViewData.push( {
+          id: item.itemId,
+          title: item.summary,
+          start: item.startDate,
+          end: item.endDate,
+          description: item.description
+        })
       });
       vm.displayEventList = vm.searchEventList.slice(0, vm.pageSize);
     },
@@ -454,7 +484,12 @@ export default {
     changeSelected() {
       this.atLeastSelected = this.displayEventList.some(item => {
         return item.isSelected;
-      });
+      })
+    },
+    showCalendarEvent(arg) {
+      console.log(arg)
+      let curEvent = this.searchEventList.find( item => item.itemId == arg.event.id)
+      this.showEditEvent(curEvent)
     }
   }
 };

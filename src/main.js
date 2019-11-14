@@ -21,7 +21,8 @@ import {
 import {
   faHeart as farHeart,
   faSquare,
-  faCheckSquare
+  faCheckSquare,
+  faCalendarAlt
 } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import * as VueGoogleMaps from "vue2-google-maps";
@@ -40,6 +41,7 @@ library.add(
   faSquare,
   faEquals,
   faAlignJustify,
+  faCalendarAlt,
   faUser,
   faPhone
 );
