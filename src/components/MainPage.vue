@@ -156,6 +156,7 @@
 </template>
 <script>
 import moment from "moment";
+import axios from 'axios'
 import { mapState } from "vuex";
 import EventItem from "./EventItem";
 import Event from "./Event";
@@ -238,9 +239,11 @@ export default {
       atLeastSelected: false,
       calendarPlugins: [ dayGridPlugin ],
       calendarViewData: [],
+      baseUrl: ''  // API URL
     };
   },
   created() {
+    console.log( this.baseUrl)
     this.$store.dispatch("getCategoryData");
     this.$store.dispatch("getEventData");
     this.$store.dispatch("getCountryData");
@@ -365,24 +368,43 @@ export default {
       ).format("YYYY-MM-DDTHH:mm:ss");
 
       if (vm.flagInsert == "new") {
-        vm.eventInfo.isNew = true;
-        vm.eventInfo.isUpdated = false;
-        vm.eventInfo.itemId = Math.floor(Math.random() * 10000000 + 1);
-        vm.eventList.push(vm.eventInfo);
+        let url = vm.baseUrl + "/event";
+    
+        axios.post(url, vm.eventInfo)
+          .then( response => {
+            console.log(response)
+            vm.eventInfo.itemId = response.id
+            vm.eventInfo.isNew = true;
+            vm.eventInfo.isUpdated = false;
+            vm.eventList.push(vm.eventInfo);
+          })
+          .catch( err => {
+            console.log(err)
+          })
+        // vm.eventInfo.itemId = Math.floor(Math.random() * 10000000 + 1);
       } else {
-        vm.eventInfo.isNew = false;
-        vm.eventInfo.isUpdated = true;
-        let curIndex = -1;
-        vm.eventList.every((item, index) => {
-          if (item.itemId === vm.eventInfo.itemId) {
-            curIndex = index;
-            return false;
-          }
-          return true;
-        });
-        if (curIndex !== -1) {
-          vm.eventList[curIndex] = vm.eventInfo;
-        }
+        let url = vm.baseUrl + `/event/${vm.eventInfo.itemId}`;
+    
+        axios.post(url, vm.eventInfo)
+          .then( response => {
+            console.log(response)
+            vm.eventInfo.isNew = false;
+            vm.eventInfo.isUpdated = true;
+            let curIndex = -1;
+            vm.eventList.every((item, index) => {
+              if (item.itemId === vm.eventInfo.itemId) {
+                curIndex = index;
+                return false;
+              }
+              return true;
+            });
+            if (curIndex !== -1) {
+              vm.eventList[curIndex] = vm.eventInfo;
+            }
+          })
+          .catch( err => {
+            console.log(err)
+          })
       }
       this.searchEvent();
     },
@@ -426,21 +448,55 @@ export default {
       this.displayEventList = this.searchEventList.slice(0, this.cntEvent);
     },
     setSelPrivate() {
-      let vm = this;
+      let vm = this,
+        selIds = [];
       vm.statusPrivate = !vm.statusPrivate;
-      this.displayEventList
+      vm.displayEventList
         .filter(item => item.isSelected)
         .forEach(item => {
-          item.privateEvent = vm.statusPrivate;
+          // item.privateEvent = vm.statusPrivate;
+          selIds.push(item.itemId);
+        });
+      let param = {
+        sel_ids: selIds,
+        status: vm.statusPrivate,
+        falg: 1
+      };
+      let url = vm.baseUrl + "/event-status"
+      axios.post(url, param)
+        .then ( (response) => {
+          console.log(response)
+          vm.displayEventList
+          .filter(item => item.isSelected)
+          .forEach(item => {
+            item.privateEvent = vm.statusPrivate;
+          });
         });
     },
     setSelStarred() {
-      let vm = this;
+      let vm = this,
+        selIds = [];
       vm.statusStarred = !vm.statusStarred;
       this.displayEventList
         .filter(item => item.isSelected)
         .forEach(item => {
-          item.starredEvent = vm.statusStarred;
+          // item.starredEvent = vm.statusStarred;
+          selIds.push(item.itemId)
+        });
+      let param = {
+        sel_ids: selIds,
+        status: vm.statusStarred,
+        falg: 2
+      };
+      let url = vm.baseUrl + "/event-status"
+      axios.post(url, param)
+        .then ( (response) => {
+          console.log(response)
+          vm.displayEventList
+          .filter(item => item.isSelected)
+          .forEach(item => {
+            item.starredEvent = vm.statusStarred;
+          });
         });
     },
     selectAll() {
