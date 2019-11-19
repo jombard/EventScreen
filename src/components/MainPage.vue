@@ -159,7 +159,7 @@
 </template>
 <script>
 import moment from "moment";
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import EventItem from "./EventItem";
 import EventForm from "./EventForm";
 import MultiSelect from "vue-multiselect";
@@ -276,6 +276,10 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'saveRealEvent',
+      'saveEventStatus'
+    ]),
     searchEvent() {
       let vm = this;
       let sDate = moment().startOf("day");
@@ -374,24 +378,38 @@ export default {
       ).format("YYYY-MM-DDTHH:mm:ss");
 
       if (vm.flagInsert == "new") {
-        vm.eventInfo.isNew = true;
-        vm.eventInfo.isUpdated = false;
-        vm.eventInfo.itemId = Math.floor(Math.random() * 10000000 + 1);
-        vm.eventList.push(vm.eventInfo);
-      } else {
-        vm.eventInfo.isNew = false;
-        vm.eventInfo.isUpdated = true;
-        let curIndex = -1;
-        vm.eventList.every((item, index) => {
-          if (item.itemId === vm.eventInfo.itemId) {
-            curIndex = index;
-            return false;
+        this.saveRealEvent(vm.eventInfo).then(response => {
+          if (response.newId == -1) {
+            console.log(response.msg)
+          } else {
+            vm.eventInfo.itemId = response.newId;
+            vm.eventInfo.isNew = true;
+            vm.eventInfo.isUpdated = false;
+            vm.eventList.push(vm.eventInfo);
           }
-          return true;
-        });
-        if (curIndex !== -1) {
-          vm.eventList[curIndex] = vm.eventInfo;
-        }
+        })
+        // vm.eventInfo.itemId = Math.floor(Math.random() * 10000000 + 1);
+      } else {
+    
+        this.saveRealEvent(vm.eventInfo).then(response => {
+          if (response.newId == -1) {
+            console.log(response.msg)
+          } else {
+            vm.eventInfo.isNew = false;
+            vm.eventInfo.isUpdated = true;
+            let curIndex = -1;
+            vm.eventList.every((item, index) => {
+              if (item.itemId === vm.eventInfo.itemId) {
+                curIndex = index;
+                return false;
+              }
+              return true;
+            });
+            if (curIndex !== -1) {
+              vm.eventList[curIndex] = vm.eventInfo;
+            }
+          }
+        })
       }
       this.searchEvent();
     },
@@ -437,22 +455,58 @@ export default {
       this.displayEventList = this.searchEventList.slice(0, this.pageSize);
     },
     setSelPrivate() {
-      let vm = this;
+      let vm = this,
+        selIds = [];
       vm.statusPrivate = !vm.statusPrivate;
-      this.displayEventList
+      vm.displayEventList
         .filter(item => item.isSelected)
         .forEach(item => {
-          item.privateEvent = vm.statusPrivate;
+          // item.privateEvent = vm.statusPrivate;
+          selIds.push(item.itemId);
         });
+      let param = {
+        sel_ids: selIds,
+        status: vm.statusPrivate,
+        falg: 1
+      };
+      this.saveEventStatus(param).then( response => {
+        if (response.status == 'ok') {
+          vm.displayEventList
+            .filter(item => item.isSelected)
+            .forEach(item => {
+              item.privateEvent = vm.statusPrivate;
+            });
+        }else {
+          console.log(response.msg)  
+        }
+      })
     },
     setSelStarred() {
-      let vm = this;
+      let vm = this,
+        selIds = [];
       vm.statusStarred = !vm.statusStarred;
       this.displayEventList
         .filter(item => item.isSelected)
         .forEach(item => {
-          item.starredEvent = vm.statusStarred;
+          // item.starredEvent = vm.statusStarred;
+          selIds.push(item.itemId)
         });
+      let param = {
+        sel_ids: selIds,
+        status: vm.statusStarred,
+        falg: 2
+      };
+      this.saveEventStatus(param).then( response => {
+        if (response.status == 'ok') {
+          vm.displayEventList
+            .filter(item => item.isSelected)
+            .forEach(item => {
+              item.starredEvent = vm.statusStarred;
+            });
+        }else {
+          console.log(response.msg)  
+        }
+      })
     },
     selectAll() {
       let vm = this;
