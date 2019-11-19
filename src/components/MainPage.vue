@@ -98,9 +98,9 @@
         </div>
         <div v-else>
           <div v-if="statusView==3">
-            <FullCalendar 
-              defaultView="dayGridMonth" 
-              :plugins="calendarPlugins" 
+            <FullCalendar
+              defaultView="dayGridMonth"
+              :plugins="calendarPlugins"
               :events="calendarViewData"
               @eventClick="showCalendarEvent"
             />
@@ -163,8 +163,8 @@ import { mapState } from "vuex";
 import EventItem from "./EventItem";
 import EventForm from "./EventForm";
 import MultiSelect from "vue-multiselect";
-import FullCalendar from '@fullcalendar/vue'
-import dayGridPlugin from '@fullcalendar/daygrid'
+import FullCalendar from "@fullcalendar/vue";
+import dayGridPlugin from "@fullcalendar/daygrid";
 export default {
   name: "MainPage",
   components: {
@@ -187,10 +187,6 @@ export default {
   data() {
     return {
       periodList: [
-        {
-          value: "",
-          text: ""
-        },
         {
           value: "today",
           text: "Today"
@@ -225,7 +221,10 @@ export default {
         }
       ],
       selCategory: [],
-      selPeriod: "",
+      selPeriod: {
+        value: "one_month",
+        text: "Next month"
+      },
       startDate: "",
       endDate: "",
       searchEventList: [],
@@ -242,8 +241,8 @@ export default {
       statusView: 2,
       location: {},
       atLeastSelected: false,
-      calendarPlugins: [ dayGridPlugin ],
-      calendarViewData: [],
+      calendarPlugins: [dayGridPlugin],
+      calendarViewData: []
     };
   },
   created() {
@@ -354,13 +353,13 @@ export default {
         if (!item.privateEvent) item.privateEvent = false;
         vm.searchEventList.push(item);
 
-        vm.calendarViewData.push( {
+        vm.calendarViewData.push({
           id: item.itemId,
           title: item.summary,
           start: item.startDate,
           end: item.endDate,
           description: item.description
-        })
+        });
       });
       vm.displayEventList = vm.searchEventList.slice(0, vm.pageSize);
     },
@@ -484,12 +483,14 @@ export default {
     changeSelected() {
       this.atLeastSelected = this.displayEventList.some(item => {
         return item.isSelected;
-      })
+      });
     },
     showCalendarEvent(arg) {
-      console.log(arg)
-      let curEvent = this.searchEventList.find( item => item.itemId == arg.event.id)
-      this.showEditEvent(curEvent)
+      console.log(arg);
+      let curEvent = this.searchEventList.find(
+        item => item.itemId == arg.event.id
+      );
+      this.showEditEvent(curEvent);
     }
   }
 };
