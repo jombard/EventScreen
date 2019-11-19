@@ -156,8 +156,7 @@
 </template>
 <script>
 import moment from "moment";
-import axios from 'axios'
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import EventItem from "./EventItem";
 import Event from "./Event";
 import MultiSelect from "vue-multiselect";
@@ -239,11 +238,9 @@ export default {
       atLeastSelected: false,
       calendarPlugins: [ dayGridPlugin ],
       calendarViewData: [],
-      baseUrl: ''  // API URL
     };
   },
   created() {
-    console.log( this.baseUrl)
     this.$store.dispatch("getCategoryData");
     this.$store.dispatch("getEventData");
     this.$store.dispatch("getCountryData");
@@ -273,6 +270,10 @@ export default {
     },
   },
   methods: {
+    ...mapActions([
+      'saveRealEvent',
+      'saveEventStatus'
+    ]),
     searchEvent() {
       let vm = this;
       let sDate = moment().startOf("day");
@@ -368,26 +369,23 @@ export default {
       ).format("YYYY-MM-DDTHH:mm:ss");
 
       if (vm.flagInsert == "new") {
-        let url = vm.baseUrl + "/event";
-    
-        axios.post(url, vm.eventInfo)
-          .then( response => {
-            console.log(response)
-            vm.eventInfo.itemId = response.id
+        this.saveRealEvent(vm.eventInfo).then(response => {
+          if (response.newId == -1) {
+            console.log(response.msg)
+          } else {
+            vm.eventInfo.itemId = response.newId;
             vm.eventInfo.isNew = true;
             vm.eventInfo.isUpdated = false;
             vm.eventList.push(vm.eventInfo);
-          })
-          .catch( err => {
-            console.log(err)
-          })
+          }
+        })
         // vm.eventInfo.itemId = Math.floor(Math.random() * 10000000 + 1);
       } else {
-        let url = vm.baseUrl + `/event/${vm.eventInfo.itemId}`;
     
-        axios.post(url, vm.eventInfo)
-          .then( response => {
-            console.log(response)
+        this.saveRealEvent(vm.eventInfo).then(response => {
+          if (response.newId == -1) {
+            console.log(response.msg)
+          } else {
             vm.eventInfo.isNew = false;
             vm.eventInfo.isUpdated = true;
             let curIndex = -1;
@@ -401,10 +399,8 @@ export default {
             if (curIndex !== -1) {
               vm.eventList[curIndex] = vm.eventInfo;
             }
-          })
-          .catch( err => {
-            console.log(err)
-          })
+          }
+        })
       }
       this.searchEvent();
     },
@@ -462,16 +458,17 @@ export default {
         status: vm.statusPrivate,
         falg: 1
       };
-      let url = vm.baseUrl + "/event-status"
-      axios.post(url, param)
-        .then ( (response) => {
-          console.log(response)
+      this.saveEventStatus(param).then( response => {
+        if (response.status == 'ok') {
           vm.displayEventList
-          .filter(item => item.isSelected)
-          .forEach(item => {
-            item.privateEvent = vm.statusPrivate;
-          });
-        });
+            .filter(item => item.isSelected)
+            .forEach(item => {
+              item.privateEvent = vm.statusPrivate;
+            });
+        }else {
+          console.log(response.msg)  
+        }
+      })
     },
     setSelStarred() {
       let vm = this,
@@ -488,16 +485,17 @@ export default {
         status: vm.statusStarred,
         falg: 2
       };
-      let url = vm.baseUrl + "/event-status"
-      axios.post(url, param)
-        .then ( (response) => {
-          console.log(response)
+      this.saveEventStatus(param).then( response => {
+        if (response.status == 'ok') {
           vm.displayEventList
-          .filter(item => item.isSelected)
-          .forEach(item => {
-            item.starredEvent = vm.statusStarred;
-          });
-        });
+            .filter(item => item.isSelected)
+            .forEach(item => {
+              item.starredEvent = vm.statusStarred;
+            });
+        }else {
+          console.log(response.msg)  
+        }
+      })
     },
     selectAll() {
       let vm = this;
