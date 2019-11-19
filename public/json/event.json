@@ -240,7 +240,7 @@
       "endDate": "2019-10-27T00:00:00",
       "time": null,
       "reminderDate": null,
-      "embargoTime": null,
+      "embargoTime": "2019-10-27T00:01:00",
       "venue": "30 St Mary Axe (The Gherkin), London",
       "isTimeTba": false,
       "isVenueTba": false,

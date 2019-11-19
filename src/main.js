@@ -15,6 +15,8 @@ import {
   faLock,
   faEquals,
   faAlignJustify,
+  faUser,
+  faPhone
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faHeart as farHeart,
@@ -24,7 +26,7 @@ import {
 } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import * as VueGoogleMaps from "vue2-google-maps";
-import VmBackTop from 'vue-multiple-back-top';
+import VmBackTop from "vue-multiple-back-top";
 
 library.add(
   faClock,
@@ -39,23 +41,38 @@ library.add(
   faSquare,
   faEquals,
   faAlignJustify,
-  faCalendarAlt
+  faCalendarAlt,
+  faUser,
+  faPhone
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
-Vue.component('vm-back-top', VmBackTop);
+Vue.component("vm-back-top", VmBackTop);
 
 import "vue-multiselect/dist/vue-multiselect.min.css";
 import "./assets/scss/custom.scss";
+
+Vue.filter("msFormatDate", function(value) {
+  if (value) {
+    return moment(value).format("LL");
+  }
+});
+
+Vue.filter("msFormatTime", function(value) {
+  if (value) {
+    return moment(value).format("LTS");
+  }
+});
 
 Vue.filter("msFormatDateTime", function(value) {
   if (value) {
     return moment(value).format("LL LTS");
   }
 });
+
 Vue.use(VueGoogleMaps, {
   load: {
-    key: "AIzaSyCQWEHV8wk0hIOg17AOzPo4A-6tiLdBIps"
+    key: process.env.VUE_APP_GOOGLE_MAPS_API_KEY
   }
 });
 
